@@ -250,8 +250,10 @@ static void msgbuf_add_errno_string(lily_msgbuf *msgbuf, int errno_val)
 {
     /* Assume that the message is of a reasonable sort of size. */
     char buffer[128];
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
     strerror_s(buffer, sizeof(buffer), errno_val);
+#elif defined(__MINGW32__)
+	strncpy(buffer, strerror(errno_val), sizeof(buffer)-1);
 #else
     strerror_r(errno_val, buffer, sizeof(buffer));
 #endif
